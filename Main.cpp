@@ -5,14 +5,14 @@
 #include <set>
 #include <assert.h>
 
-constexpr int TARGET_SUM = 210;
+constexpr int TARGET_SUM = 121;
 
 using available_t = std::set<int>; // { 3, 5, 9 }
 using pair_t = int; // small number x 100 + large number - for one specific pair only
 using combination_t = std::set<pair_t>; // for one combination (might not be complete)
-using combinations_t = std::vector<combination_t>;
+using combinations_t = std::set<combination_t>;
 // [0] - decide 1 pair, [1] - decide 2 pairs, ...
-using all_combinations_t = combinations_t[3];
+using all_combinations_t = combinations_t[5];
 
 void createCombinations(
 	const available_t&   available1,
@@ -49,21 +49,16 @@ void createCombinations(
 			}
 			if (sum > TARGET_SUM) { continue; }
 
-			bool same_combination = false;
 			auto& curr_combinations = all_combinations[nthPair - 1];
-			for (const auto& curr_combination : curr_combinations) {
-				if (combination == curr_combination) {
-					same_combination = true;
-					break;
-				}
+			if (curr_combinations.find(combination) != curr_combinations.end()) {
+				continue; // same combination
 			}
-			if (same_combination) { continue; }
 
 			if (combination.size() != nthPair) {
 				assert(false);
 				break;
 			}
-			curr_combinations.push_back(combination);
+			curr_combinations.insert(combination);
 			createCombinations(new_available, combination, all_combinations, nthPair + 1);
 		}
 	}
@@ -72,7 +67,7 @@ void createCombinations(
 int main()
 {
 	// all elements should be > 0
-	auto available = available_t{ 13, 11, 9, 7, 5, 4 };
+	auto available = available_t{ 10, 9, 8, 7, 6, 5, 4, 3, 2, 1 };
 	all_combinations_t allCombinations;
 	assert(available.size() / 2 <= _countof(allCombinations));
 
