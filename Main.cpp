@@ -12,7 +12,7 @@ using pair_t = int; // small number x 100 + large number - for one specific pair
 using combination_t = std::set<pair_t>; // for one combination (might not be complete)
 using combinations_t = std::set<combination_t>;
 // [0] - decide 1 pair, [1] - decide 2 pairs, ...
-using all_combinations_t = combinations_t[5];
+using all_combinations_t = std::vector<combinations_t>;
 
 void createCombinations(
 	const available_t&   available1,
@@ -36,6 +36,7 @@ void createCombinations(
 			if (curr_pairs.find(new_pair) != curr_pairs.cend()) { continue; }
 			curr_pairs.insert(new_pair);
 
+			// assertion only
 			if (prev_combination.find(new_pair) != prev_combination.cend()) {
 				assert(false);
 				continue;
@@ -54,6 +55,7 @@ void createCombinations(
 				continue; // same combination
 			}
 
+			// assertion only
 			if (combination.size() != nthPair) {
 				assert(false);
 				break;
@@ -68,8 +70,13 @@ int main()
 {
 	// all elements should be > 0
 	auto available = available_t{ 10, 9, 8, 7, 6, 5, 4, 3, 2, 1 };
-	all_combinations_t allCombinations;
-	assert(available.size() / 2 <= _countof(allCombinations));
+	if ((available.size() % 2) == 1) {
+		std::cout << "There are " << available.size() << " (odd) elements, it is invalid." << std::endl;
+		std::cout << "Please provide an additional element to make them even." << std::endl;
+		return 1;
+	}
+
+	all_combinations_t allCombinations(available.size() / 2);
 
 	createCombinations(available, std::set<pair_t>{}, allCombinations, 1);
 
